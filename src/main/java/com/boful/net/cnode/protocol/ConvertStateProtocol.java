@@ -25,6 +25,8 @@ public class ConvertStateProtocol {
     // 编码
     public IoBuffer toByteArray() throws IOException {
         int count = countLength();
+        System.out.println("ConvertStateProtocol countLength="+count);
+        System.out.println("ConvertStateProtocol message="+message);
         IoBuffer ioBuffer = IoBuffer.allocate(count);
         ioBuffer.putInt(OPERATION);
         byte[] messageBuffer = message.getBytes("UTF-8");
@@ -36,12 +38,12 @@ public class ConvertStateProtocol {
 
     // 解码
     public static ConvertStateProtocol parse(IoBuffer ioBuffer) throws IOException {
-
         if (ioBuffer.remaining() < 8) {
             return null;
         }
 
         int messageLen = ioBuffer.getInt();
+        System.out.println("ConvertStateProtocol parse messageLen : "+messageLen);
         if (ioBuffer.remaining() != (messageLen + 4)) {
             return null;
         }
@@ -51,6 +53,7 @@ public class ConvertStateProtocol {
         byte[] messageBuffer = new byte[messageLen];
         ioBuffer.get(messageBuffer);
         convertStateProtocol.setMessage(new String(messageBuffer, "UTF-8"));
+        System.out.println("ConvertStateProtocol parse Message : "+convertStateProtocol.getMessage());
 
         return convertStateProtocol;
     }
