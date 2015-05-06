@@ -10,7 +10,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 
 public class TransferProtocol {
     public static final int OPERATION = Operation.TAG_SEND;
-    private File destFile;
+    private String destFile;
     private File srcFile;
 
     private long fileSize;
@@ -43,11 +43,11 @@ public class TransferProtocol {
         this.buffer = buffer;
     }
 
-    public File getDestFile() {
+    public String getDestFile() {
         return destFile;
     }
 
-    public void setDestFile(File destFile) {
+    public void setDestFile(String destFile) {
         this.destFile = destFile;
     }
 
@@ -78,7 +78,7 @@ public class TransferProtocol {
     // 编码
     public IoBuffer toByteArray() throws IOException {
         String srcPath = srcFile.getAbsolutePath();
-        String destPath = destFile.getAbsolutePath();
+        String destPath = destFile;
         int count = countLength();
 
         IoBuffer ioBuffer = IoBuffer.allocate(count);
@@ -131,7 +131,7 @@ public class TransferProtocol {
         ioBuffer.get(buffer);
 
         transferProtocol.setSrcFile(new File(new String(srcBuffer, "UTF-8")));
-        transferProtocol.setDestFile(new File(new String(destBuffer, "UTF-8")));
+        transferProtocol.setDestFile(new String(destBuffer, "UTF-8"));
         transferProtocol.setBuffer(buffer);
         return transferProtocol;
     }
@@ -139,7 +139,7 @@ public class TransferProtocol {
     public int countLength() {
         // TAG+SRCLEN+DESCLEN+START+END+LEN+SRC+DEST;
         String srcPath = srcFile.getAbsolutePath();
-        String destPath = destFile.getAbsolutePath();
+        String destPath = destFile;
 
         try {
             return 4 + 4 * 2 + 8 * 2 + 4 + 16 + srcPath.getBytes("UTF-8").length + destPath.getBytes("UTF-8").length

@@ -184,7 +184,7 @@ public class CommandLineUtils {
 
         // 元文件为视频
         if (FileType.isVideo(diskFile.getName())) {
-            if (videoBitrate == 0 || audioBitrate == 0 || width == 0 || height == 0) {
+            if (videoBitrate == 0 || width == 0 || height == 0) {
                 return "视频文件转码必须设置参数:videoBitrate、audioBitrate和size！";
             }
             if (!FileType.isVideo(destFile.getName())) {
