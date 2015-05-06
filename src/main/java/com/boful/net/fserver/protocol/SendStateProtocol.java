@@ -12,7 +12,7 @@ public class SendStateProtocol {
     public static final int OPERATION = Operation.TAG_SEND_STATE;
     private int state = Operation.TAG_STATE_SEND_OK;
     private File srcFile;
-    private File destFile;
+    private String destFile;
     private String hash;
 
     public int getState() {
@@ -31,11 +31,11 @@ public class SendStateProtocol {
         this.srcFile = srcFile;
     }
 
-    public File getDestFile() {
+    public String getDestFile() {
         return destFile;
     }
 
-    public void setDestFile(File destFile) {
+    public void setDestFile(String destFile) {
         this.destFile = destFile;
     }
 
@@ -54,7 +54,7 @@ public class SendStateProtocol {
     // 编码
     public IoBuffer toByteArray() throws IOException {
         String srcPath = srcFile.getAbsolutePath();
-        String destPath = destFile.getAbsolutePath();
+        String destPath = destFile;
 
         IoBuffer ioBuffer = IoBuffer.allocate(countLength());
         ioBuffer.putInt(OPERATION);
@@ -97,7 +97,7 @@ public class SendStateProtocol {
         String destPath = new String(destPathBuffer, "UTF-8");
 
         SendStateProtocol sendStateProtocol = new SendStateProtocol();
-        sendStateProtocol.setDestFile(new File(destPath));
+        sendStateProtocol.setDestFile(destPath);
         sendStateProtocol.setSrcFile(new File(srcPath));
         sendStateProtocol.setHash(hash);
         sendStateProtocol.setState(state);
@@ -108,7 +108,7 @@ public class SendStateProtocol {
     public int countLength() {
         // TAG+STATE+SRCLEN+DESTLEN+HASH+srcBuffer+destBuffer
         String srcPath = srcFile.getAbsolutePath();
-        String destPath = destFile.getAbsolutePath();
+        String destPath = destFile;
 
         try {
             return 4 + 4 + 4 + 4 + 16 + srcPath.getBytes("UTF-8").length + destPath.getBytes("UTF-8").length;
