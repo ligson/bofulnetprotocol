@@ -9,7 +9,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 public class DownloadProtocol {
     public static final int OPERATION = Operation.TAG_DOWNLOAD;
     private File src;
-    private File dest;
+    private String dest;
 
     public File getSrc() {
         return src;
@@ -19,11 +19,11 @@ public class DownloadProtocol {
         this.src = src;
     }
 
-    public File getDest() {
+    public String getDest() {
         return dest;
     }
 
-    public void setDest(File dest) {
+    public void setDest(String dest) {
         this.dest = dest;
     }
 
@@ -34,7 +34,7 @@ public class DownloadProtocol {
     // 编码
     public IoBuffer toByteArray() throws IOException {
         String srcPath = src.getAbsolutePath();
-        String destPath = dest.getAbsolutePath();
+        String destPath = dest;
         byte[] srcPathBuffer = srcPath.getBytes("UTF-8");
         byte[] destPathBuffer = destPath.getBytes("UTF-8");
         int count = countLength();
@@ -69,7 +69,7 @@ public class DownloadProtocol {
         String destPath = new String(destPathBuffer, "UTF-8");
 
         DownloadProtocol downloadProtocol = new DownloadProtocol();
-        downloadProtocol.setDest(new File(destPath));
+        downloadProtocol.setDest(destPath);
         downloadProtocol.setSrc(new File(srcPath));
 
         return downloadProtocol;
@@ -78,7 +78,7 @@ public class DownloadProtocol {
     public int countLength() {
         // TAG+SRCLEN+DESTLEN+srcBuffer + destBuffer
         String srcPath = src.getAbsolutePath();
-        String destPath = dest.getAbsolutePath();
+        String destPath = dest;
         try {
             return 4 + 4 + 4 + srcPath.getBytes("UTF-8").length + destPath.getBytes("UTF-8").length;
         } catch (UnsupportedEncodingException e) {
