@@ -43,7 +43,6 @@ public class ConvertStateProtocol {
         }
 
         int messageLen = ioBuffer.getInt();
-        System.out.println("ConvertStateProtocol parse messageLen : "+messageLen);
         if (ioBuffer.remaining() != (messageLen + 4)) {
             return null;
         }
@@ -53,7 +52,6 @@ public class ConvertStateProtocol {
         byte[] messageBuffer = new byte[messageLen];
         ioBuffer.get(messageBuffer);
         convertStateProtocol.setMessage(new String(messageBuffer, "UTF-8"));
-        System.out.println("ConvertStateProtocol parse Message : "+convertStateProtocol.getMessage());
 
         return convertStateProtocol;
     }
