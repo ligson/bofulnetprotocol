@@ -9,7 +9,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.mina.core.buffer.IoBuffer;
 
 public class TransferProtocol {
-    public static final int OPERATION = Operation.TAG_SEND;
+    public static int OPERATION = Operation.TAG_SEND;
     private String destFile;
     private File srcFile;
 
