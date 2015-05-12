@@ -8,10 +8,18 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.mina.core.buffer.IoBuffer;
 
-public class TransferProtocol {
-    public static int OPERATION = Operation.TAG_SEND;
+public class TransferProtocol{
+    public int OPERATION = Operation.TAG_SEND;
     private String destFile;
     private File srcFile;
+
+    public int getOPERATION() {
+        return OPERATION;
+    }
+
+    public void setOPERATION(int oPERATION) {
+        OPERATION = oPERATION;
+    }
 
     private long fileSize;
     private long offset;
@@ -107,6 +115,42 @@ public class TransferProtocol {
             return null;
         }
         TransferProtocol transferProtocol = new TransferProtocol();
+        int srcPathLen = ioBuffer.getInt();
+        int destPathLen = ioBuffer.getInt();
+        long fileLength = ioBuffer.getLong();
+        transferProtocol.setFileSize(fileLength);
+        transferProtocol.setOffset(ioBuffer.getLong());
+        transferProtocol.setLen(ioBuffer.getInt());
+        // read hash
+        byte[] hashBuffer = new byte[16];
+        ioBuffer.get(hashBuffer);
+        transferProtocol.setHash(Hex.encodeHexString(hashBuffer).toUpperCase());
+
+        int remainLen = srcPathLen + destPathLen + transferProtocol.getLen();
+        int remain = ioBuffer.remaining();
+        if (remain < remainLen) {
+            return null;
+        }
+        byte[] srcBuffer = new byte[srcPathLen];
+        byte[] destBuffer = new byte[destPathLen];
+        byte[] buffer = new byte[transferProtocol.getLen()];
+        ioBuffer.get(srcBuffer);
+        ioBuffer.get(destBuffer);
+        ioBuffer.get(buffer);
+
+        transferProtocol.setSrcFile(new File(new String(srcBuffer, "UTF-8")));
+        transferProtocol.setDestFile(new String(destBuffer, "UTF-8"));
+        transferProtocol.setBuffer(buffer);
+        return transferProtocol;
+    }
+    
+ // 解码
+    public static TransferProtocol parseDownload(IoBuffer ioBuffer) throws IOException {
+        if (ioBuffer.remaining() < 48) {
+            return null;
+        }
+        TransferProtocol transferProtocol = new TransferProtocol();
+        transferProtocol.OPERATION = Operation.TAG_SEND_DOWNLOAD;
         int srcPathLen = ioBuffer.getInt();
         int destPathLen = ioBuffer.getInt();
         long fileLength = ioBuffer.getLong();
